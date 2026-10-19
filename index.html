@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Vacaciones - Movistar / Personal</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- SDK de EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+
+  <!-- PANTALLA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logos">
+        <svg width="52" height="42" viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 6,52 C 3,32 11,8 27,8 C 38,8 37,38 46,38 C 54,38 52,10 66,10 C 82,10 90,30 86,52 C 84,60 74,60 76,50 C 79,38 76,22 68,22 C 60,22 55,40 45,58 C 39,58 35,40 28,22 C 21,22 17,38 18,50 C 19,60 8,60 6,52 Z" fill="#0052FF"/>
+        </svg>
+        <div class="brand-divider"></div>
+        <svg width="135" height="44" viewBox="0 0 160 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="52" rx="6" fill="#00A3E0"/>
+          <text x="80" y="35" fill="#FFFFFF" font-family="'Inter', -apple-system, Arial, sans-serif" font-weight="700" font-size="27" letter-spacing="-0.8" text-anchor="middle">personal</text>
+        </svg>
+      </div>
+
+      <h2>Sistema de Vacaciones</h2>
+      <p>Ingresá tus credenciales de acceso</p>
+
+      <form onsubmit="doLogin(event)">
+        <div class="field-group">
+          <label>Usuario</label>
+          <input id="l-user" type="text" placeholder="Ej: kruki" required autofocus>
+        </div>
+        <div class="field-group">
+          <label>Contraseña</label>
+          <input id="l-pass" type="password" placeholder="Ingresá tu contraseña">
+        </div>
+        <button type="submit" class="btn-login">Iniciar Sesión</button>
+        <div id="l-err" class="login-err">Usuario o contraseña incorrectos.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CAMBIAR CONTRASEÑA -->
+  <div id="pwd-modal">
+    <div class="card" style="width:380px; max-width:92%; background:#fff; padding:24px; border-radius:18px; box-shadow:0 20px 40px rgba(0,0,0,0.3); margin:0;">
+      <h3 style="margin-top:0; color:var(--pers-navy);">🔑 Cambiar mi Contraseña</h3>
+      <p style="color:var(--pers-muted); font-size:12px; margin-top:-6px; margin-bottom:18px;">
+        Actualizá tu clave de acceso personal al sistema.
+      </p>
+
+      <form onsubmit="saveNewPwd(event)">
+        <div class="field-group">
+          <label>Contraseña Actual</label>
+          <input id="pwd-old" type="password" placeholder="Tu contraseña actual">
+        </div>
+        <div class="field-group">
+          <label>Nueva Contraseña</label>
+          <input id="pwd-new" type="password" placeholder="Ingresá la nueva clave" required>
+        </div>
+        <div class="field-group">
+          <label>Confirmar Nueva Contraseña</label>
+          <input id="pwd-confirm" type="password" placeholder="Repetí la nueva clave" required>
+        </div>
+        
+        <div id="pwd-err" style="color:var(--danger); font-weight:700; font-size:12px; background:#FEE2E2; padding:8px; border-radius:8px; margin-bottom:14px; display:none;"></div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" onclick="$('#pwd-modal').style.display='none'" style="background:#E2E8F0; color:var(--pers-navy); border:0;">Cancelar</button>
+          <button type="submit" class="btn">Guardar Clave</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- HEADER DE LA APLICACIÓN -->
+  <header id="main-header" style="display:none;">
+    <div class="brand">
+      <div class="brand-logos-hdr">
+        <svg width="32" height="24" viewBox="0 0 100 70" fill="none">
+          <path d="M 6,52 C 3,32 11,8 27,8 C 38,8 37,38 46,38 C 54,38 52,10 66,10 C 82,10 90,30 86,52 C 84,60 74,60 76,50 C 79,38 76,22 68,22 C 60,22 55,40 45,58 C 39,58 35,40 28,22 C 21,22 17,38 18,50 C 19,60 8,60 6,52 Z" fill="#0052FF"/>
+        </svg>
+        <svg width="86" height="28" viewBox="0 0 160 52" fill="none">
+          <rect width="160" height="52" rx="6" fill="#00A3E0"/>
+          <text x="80" y="35" fill="#FFFFFF" font-family="'Inter', sans-serif" font-weight="700" font-size="27" letter-spacing="-0.8" text-anchor="middle">personal</text>
+        </svg>
+      </div>
+      <h1>Sistema de Vacaciones</h1>
+    </div>
+    
+    <button data-v="d" onclick="V='d';render()">📊 Resumen General</button>
+    <button data-v="p" onclick="V='p';render()">📅 Planilla por Oficina</button>
+    <button data-v="a" onclick="V='a';render()">⚙️ Gestión Técnicos</button>
+    <button id="btn-u-nav" data-v="u" onclick="V='u';render()" style="display:none;">👥 Usuarios</button>
+    <button id="btn-l-nav" data-v="l" onclick="V='l';render()" style="display:none;">📋 Log de Actividad</button>
+
+    <span class="sp"></span>
+
+    <div id="u-badge" class="user-badge"></div>
+    <button onclick="openChangePwdModal()" title="Cambiar mi Contraseña">🔑 Contraseña</button>
+    <button id="btn-save" onclick="saveData()" class="btn-save" title="Guardar todos los cambios realizados">💾 Guardar</button>
+    <button onclick="doLogout()" title="Cerrar Sesión">🚪 Salir</button>
+
+    <div class="sync-badge">
+      <span id="sync-dot" class="sync-dot"></span>
+      <span id="sync-text">Conectando...</span>
+    </div>
+
+    <button onclick="loadData(true)" title="Recargar datos de la nube">🔄 Actualizar</button>
+
+    <label>Distrito</label>
+    <select id="ds" onchange="DIST=this.value; SEL=null; render()"></select>
+
+    <label>Año</label>
+    <select id="ys" onchange="S.y=+this.value; SEL=null; markUnsaved(); render()"></select>
+    
+    <label>Umbral %</label>
+    <input id="u" type="number" min="1" max="100" onchange="S.u=+this.value||20; markUnsaved(); render()">
+    
+    <button id="btn-admin-csv" onclick="csv()" style="display:none;">📥 CSV</button>
+    <button id="btn-admin-backup" onclick="dl('vacaciones-personal.json',JSON.stringify(S),'application/json')" style="display:none;">💾 Backup</button>
+    <button id="btn-admin-load" onclick="$('#fi').click()" style="display:none;">📂 Cargar</button>
+    <input id="fi" type="file" accept=".json" hidden onchange="imp(this)">
+  </header>
+
+  <main id="app" style="display:none;"></main>
+
+  <!-- MÓDULOS JAVASCRIPT -->
+  <script src="js/config.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/email.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/desktop-skin.js"></script>
+</body>
+</html>
